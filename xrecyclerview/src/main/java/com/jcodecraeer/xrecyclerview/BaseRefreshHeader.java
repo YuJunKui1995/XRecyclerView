@@ -10,10 +10,22 @@ interface BaseRefreshHeader {
 	int STATE_REFRESHING = 2;
 	int STATE_DONE = 3;
 
-	void onMove(float delta);
+	/**
+	 * true代表消费事件
+	 * @param delta
+	 * @return
+	 */
+	boolean onMove(float delta);
 
 	boolean releaseAction();
 
 	void refreshComplete();
+
+    /**
+     * 是否处理fling事件
+     * @param velocityY
+     * @return
+     */
+	boolean fling(int velocityY) ;
 
 }

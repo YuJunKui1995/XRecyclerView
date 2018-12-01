@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,7 @@ public class XRecyclerView extends RecyclerView {
     private ArrayList<View> mHeaderViews = new ArrayList<>();
     private WrapAdapter mWrapAdapter;
     private float mLastY = -1;
-    private static final float DRAG_RATE = 3;
+    public static final float DRAG_RATE = 3;
     private LoadingListener mLoadingListener;
     private ArrowRefreshHeader mRefreshHeader;
     private boolean pullRefreshEnabled = true;
@@ -305,6 +306,11 @@ public class XRecyclerView extends RecyclerView {
         }
     }
 
+    /**
+     * 上一个move事件是否处理
+     */
+    private boolean lastMoveProcess = false;
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (mLastY == -1) {
@@ -318,7 +324,17 @@ public class XRecyclerView extends RecyclerView {
                 final float deltaY = ev.getRawY() - mLastY;
                 mLastY = ev.getRawY();
                 if (isOnTop() && pullRefreshEnabled && appbarState == AppBarStateChangeListener.State.EXPANDED) {
-                    mRefreshHeader.onMove(deltaY / DRAG_RATE);
+
+                    if (mRefreshHeader.onMove(deltaY / DRAG_RATE)) {
+                        lastMoveProcess = true;
+                        return true;
+                    } else {
+                        if (lastMoveProcess){
+                            ev.setAction(KeyEvent.ACTION_DOWN);
+                            lastMoveProcess=false;
+                        }
+                    }
+
                     if (mRefreshHeader.getVisibleHeight() > 0 && mRefreshHeader.getState() < ArrowRefreshHeader.STATE_REFRESHING) {
                         return false;
                     }
@@ -336,6 +352,16 @@ public class XRecyclerView extends RecyclerView {
                 break;
         }
         return super.onTouchEvent(ev);
+    }
+
+
+    @Override
+    public boolean fling(int velocityX, int velocityY) {
+
+        if (isOnTop() && mRefreshHeader.fling(velocityY)) {
+            return true;
+        }
+        return super.fling(velocityX, velocityY);
     }
 
     private int findMax(int[] lastPositions) {

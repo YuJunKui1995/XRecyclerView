@@ -95,10 +95,16 @@ public class JellyView extends View  implements BaseRefreshHeader{
     }
 
     @Override
-    public void onMove(float delta) {
+    public boolean fling(int velocityY) {
+        return false;
+    }
+
+    @Override
+    public boolean onMove(float delta) {
         jellyHeight = jellyHeight + (int)delta;
         Log.i("jellyHeight", "delta = " + delta);
         this.invalidate();
+        return false;
     }
 
     @Override

@@ -162,7 +162,12 @@ public class ArrowRefreshHeader extends LinearLayout implements BaseRefreshHeade
         }, 200);
 	}
 
-	public void setVisibleHeight(int height) {
+    @Override
+    public boolean fling(int velocityY) {
+        return false;
+    }
+
+    public void setVisibleHeight(int height) {
 		if (height < 0) height = 0;
 		LayoutParams lp = (LayoutParams) mContainer .getLayoutParams();
 		lp.height = height;
@@ -175,7 +180,7 @@ public class ArrowRefreshHeader extends LinearLayout implements BaseRefreshHeade
 	}
 
     @Override
-    public void onMove(float delta) {
+    public boolean onMove(float delta) {
         if(getVisibleHeight() > 0 || delta > 0) {
             setVisibleHeight((int) delta + getVisibleHeight());
             if (mState <= STATE_RELEASE_TO_REFRESH) { // 未处于刷新状态，更新箭头
@@ -186,6 +191,7 @@ public class ArrowRefreshHeader extends LinearLayout implements BaseRefreshHeade
                 }
             }
         }
+        return false;
     }
 
     @Override
