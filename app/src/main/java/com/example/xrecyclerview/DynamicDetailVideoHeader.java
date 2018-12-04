@@ -72,7 +72,7 @@ public class DynamicDetailVideoHeader extends ArrowRefreshHeader {
     @Override
     public boolean onMove(float deltaY) {
 
-        mState = STATE_DONE;
+        mState = STATE_NORMAL;
         deltaY = deltaY * XRecyclerView.DRAG_RATE * 1.5f;
 
         //低于最低高度并且还想缩小的

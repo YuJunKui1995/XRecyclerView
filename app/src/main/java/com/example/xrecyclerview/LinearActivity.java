@@ -32,26 +32,14 @@ public class LinearActivity extends AppCompatActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
 
-
+        mRecyclerView.setPullRefreshEnabled(false);
         mRecyclerView.setRefreshHeader(new DynamicDetailVideoHeader(this));
         mRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
 
         mRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                refreshTime++;
-                times = 0;
-                new Handler().postDelayed(new Runnable() {
-                    public void run() {
-                        listData.clear();
-                        for (int i = 0; i < 15; i++) {
-                            listData.add("item" + i + "after " + refreshTime + " times of refresh");
-                        }
-                        mAdapter.notifyDataSetChanged();
-                        mRecyclerView.refreshComplete();
-                    }
-
-                }, 5000);            //refresh data here
+                loadData();
             }
 
             @Override
@@ -85,6 +73,23 @@ public class LinearActivity extends AppCompatActivity {
         mAdapter = new MyAdapter(listData);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.refresh();
+        loadData();
+    }
+
+    private void loadData() {
+        refreshTime++;
+        times = 0;
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                listData.clear();
+                for (int i = 0; i < 15; i++) {
+                    listData.add("item" + i + "after " + refreshTime + " times of refresh");
+                }
+                mAdapter.notifyDataSetChanged();
+                mRecyclerView.refreshComplete();
+            }
+
+        }, 5000);            //refresh data here
     }
 
     @Override
